@@ -1,0 +1,20 @@
+import pandas as pd
+
+configfile: "../config/config.yaml"
+IDS = set(pd.read_csv(config["sample_file"])['sample'].str.rsplit('_',n=1).str[0]) #AJ30_1_2_MHV_RDRP
+SAMPLES = pd.read_csv(config["sample_file"])['sample'] #AJ30_1_2_MHV_RDRP_A1
+df=pd.read_csv(config["sample_file"])
+PET_STORE=set(df.loc[df['genotype'].str.contains('pet')]['sample'].str.rsplit('_',n=1).str[0])
+IN_DIR = config["in_dir"]
+
+include: "rules/common.smk"
+include: "rules/check_primers.smk"
+
+rule all:
+    input:
+        expand("../ref_files/"+config["ref_seq"]+".{ext}", ext=["amb","ann","bwt","pac","sa"]),
+        expand("../results/trimmed_reads/{id}_{rep}{pool}_{r}_trimmed.fastq", id=IDS, rep=["A","B"], pool=["1","2"], r=["R1", "R2"]),
+        expand("../results/consensus_calling/final/{pet_store}.fa", pet_store=PET_STORE),
+        expand("../results/bed/{pet_store}.bed", pet_store=PET_STORE),
+        expand("../results/primers/{pet_store}_primer_mismatches.tsv", pet_store=PET_STORE),
+        expand("../results/{pet_store}_masked_primer_names.txt", pet_store=PET_STORE)        

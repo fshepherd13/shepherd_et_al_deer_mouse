@@ -1,0 +1,7 @@
+in_dir: "/home/langlois/sheph085/dirty_mouse_virome/fsc027/raw_data" #Path to raw fastq reads
+adapters: "../ref_files/adapters.fa"  #Path to adapter sequences, used for trimming reads
+sample_file: "../config/samples_aj34.csv" #CSV file listing sequencing files (just need the beginning part of the fasta file up until L00*_R*_001.fastq.gz, not the whole thing). Full name is figured out by the common.smk rule
+ref_seq: "../ref_files/AJ34_MuKV1_contig" #Reference contig used to generate consensus seq from d0 feces
+primers: "../ref_files/AJ34_MuKV1_primers.bed" #BED file that describes the primer binding positions of the primers used to generate amplicons
+primer_csv: "../ref_files/MuKV1_primers.csv" #CSV file that contains the primer names, sequences, and what pool they belong to
+pair_information: "../ref_files/MuKV1_primer_pair_information.tsv" #CSV file that connects the primers pairs, with the forward primer in each pair in the first column and the reverse primer in each pair in the second column

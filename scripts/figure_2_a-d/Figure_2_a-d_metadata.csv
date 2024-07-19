@@ -1,0 +1,9 @@
+file,experiment,tissue,primer_set,cage,mouse_id,sample_id,mouse_genotype,genus,petstore,collection_day
+AJ34_2_2_SI_MKV1_WG.filtered.tsv,AJ34,SI,MuKV1_WG,1,AJ34_2,AJ34_2_2,wt_peromyscus,Peromyscus,a,5
+AJ34_3_2_SI_MKV1_WG.filtered.tsv,AJ34,SI,MuKV1_WG,1,AJ34_3,AJ34_3_2,stat2_peromyscus,Peromyscus,a,5
+AJ34_6_2_SI_MKV1_WG.filtered.tsv,AJ34,SI,MuKV1_WG,1,AJ34_6,AJ34_6_2,petstore,Mus,a,5
+AJ34_6_11_d0_FECES_MKV1_WG.filtered.tsv,AJ34,feces,MuKV1_WG,1,AJ34_6,AJ34_6_11_d0,petstore,Mus,a,0
+AJ34_6_11_d1_FECES_MKV1_WG.filtered.tsv,AJ34,feces,MuKV1_WG,1,AJ34_6,AJ34_6_11_d1,petstore,Mus,a,1
+AJ34_6_11_d2_FECES_MKV1_WG.filtered.tsv,AJ34,feces,MuKV1_WG,1,AJ34_6,AJ34_6_11_d2,petstore,Mus,a,2
+AJ34_6_11_d3_FECES_MKV1_WG.filtered.tsv,AJ34,feces,MuKV1_WG,1,AJ34_6,AJ34_6_11_d3,petstore,Mus,a,3
+AJ34_6_11_d4_FECES_MKV1_WG.filtered.tsv,AJ34,feces,MuKV1_WG,1,AJ34_6,AJ34_6_11_d4,petstore,Mus,a,4

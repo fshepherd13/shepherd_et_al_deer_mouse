@@ -1,0 +1,16 @@
+##gtf-version X
+# GFF-like GTF i.e. not checked against any GTF specification. Conversion based on GFF input, standardised by AGAT.
+##source-version geneious 2024.0.3
+##sequence-region	Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	1	8443
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	gene	754	8055	.	+	.	gene_id "MKV1_polyprotein"; ID "MKV1_polyprotein"; Name "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	754	1269	.	+	.	gene_id "L_region"; ID "L_region"; Name "L_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	1270	2373	.	+	.	gene_id "VP0_region"; ID "VP0_region"; Name "VP0_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	2374	3042	.	+	.	gene_id "VP3_region"; ID "VP3_region"; Name "VP3_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	3043	3882	.	+	.	gene_id "VP1_region"; ID "VP1_region"; Name "VP1_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	3883	4215	.	+	.	gene_id "2A_region"; ID "2A_region"; Name "2A_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	4216	4710	.	+	.	gene_id "2B_region"; ID "2B_region"; Name "2B_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	4711	5715	.	+	.	gene_id "2C_region"; ID "2C_region"; Name "2C_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	5716	6000	.	+	.	gene_id "3A_region"; ID "3A_region"; Name "3A_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	6001	6081	.	+	.	gene_id "3B_region"; ID "3B_region"; Name "3B_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	6082	6651	.	+	.	gene_id "3C_region"; ID "3C_region"; Name "3C_region"; Parent "MKV1_polyprotein";
+Consensus_AJ34_6_11_d0_FECES_MKV1_WG_threshold_0_quality_30	AGAT	CDS	6652	8055	.	+	.	gene_id "3D_region"; ID "3D_region"; Name "3D_region"; Parent "MKV1_polyprotein";

@@ -1,0 +1,9 @@
+SNPGenie parameter log.
+
+MINIMUM ALLELE FREQUENCY: 0.03
+SLIDING WINDOW LENGTH: 50
+MULTI-FASTA MODE: Default used; No
+SNP REPORTS: User submitted file: AJ34_2_2_SI_MKV1_WG_filtered_merged_ed.vcf
+REFERENCE FASTA FILE: User submitted file: /home/langlois/sheph085/dirty_mouse_virome/fsc027/results/consensus_calling/final/AJ34_6_11_d0_FECES_MKV1_WG.fa
+GTF FILE: User submitted file: /home/langlois/sheph085/dirty_mouse_virome/fsc027/results/consensus_calling/final/AJ34_6_11_d0_FECES_MKV1_WG.gtf
+COMPLEMENT MODE: No

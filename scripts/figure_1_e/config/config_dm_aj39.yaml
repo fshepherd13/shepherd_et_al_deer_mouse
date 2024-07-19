@@ -1,0 +1,12 @@
+in_dir: /home/langlois/shared/UI_data_release/UMN_project012 #Directory containing raw fastq files from RNAseq
+reference_genome: /home/langlois/shared/ref_genomes/star_indices/peromyscus_maniculatus #Ref genome index for mapping reads to
+sample_file: "../config/samples_dm_aj39.csv"
+
+trimmomatic: #Trimmomatic parameters
+    threads: 32
+    other: ILLUMINACLIP:../ref_files/all_illumina_adapters.fa:2:30:10  LEADING:10 TRAILING:10 SLIDINGWINDOW:4:20 MINLEN:38
+    
+blast:
+    db: /home/langlois/shared/ref_dbs/ncbi_nt/ntandnovelseq
+    tax_nodes: /home/langlois/shared/ref_dbs/taxdump/nodes.dmp
+    tax_names: /home/langlois/shared/ref_dbs/taxdump/names.dmp

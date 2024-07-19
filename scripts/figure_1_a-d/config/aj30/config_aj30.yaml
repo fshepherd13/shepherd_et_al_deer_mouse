@@ -1,0 +1,13 @@
+in_dir:  #Path to directory containing raw fastq files from RNAseq
+reference_genome: #Path to directory containing indexed Mus maniculatus ref genome
+sample_file: "../config/aj30/samples_aj30.csv" #Path to csv file listing *ALL the animal samples*
+experiment: "aj30"
+
+trimmomatic: #Trimmomatic parameters
+    threads: 32
+    other: ILLUMINACLIP:../ref_files/all_illumina_adapters.fa:2:30:10  LEADING:10 TRAILING:10 SLIDINGWINDOW:4:20 MINLEN:38
+
+blast: #Paths to blast database and taxonomy files. Listed here for the Langlois lab, configure for your system.
+    db: /home/langlois/shared/ref_dbs/ncbi_nt/ntandnovelseq
+    tax_nodes: /home/langlois/shared/ref_dbs/taxdump/nodes.dmp
+    tax_names: /home/langlois/shared/ref_dbs/taxdump/names.dmp

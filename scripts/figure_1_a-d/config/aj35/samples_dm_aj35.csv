@@ -1,0 +1,4 @@
+Sample,genotype,condition,tissue,experiment,cage,labID
+AJ35_7_2_AACGCCTGTG-CGAGTCCGTT,wt_deer_mouse_1,ch,si,AJ35,1,AJ35_7_2
+AJ35_7_3_TACGTCACAA-CGTGGTATGG,wt_deer_mouse_1,ch,liv,AJ35,1,AJ35_7_3
+AJ35_7_4_ACAGCGTCAC-CGAATGACTA,wt_deer_mouse_1,ch,lung,AJ35,1,AJ35_7_4

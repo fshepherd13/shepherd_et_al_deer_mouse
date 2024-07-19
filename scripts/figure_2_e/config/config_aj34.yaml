@@ -1,0 +1,3 @@
+in_dir: "../../figure_2_a-d/final/variant_calling_AJ34_6_11_d0_FECES_MKV1_WG/merged_pools/"
+sample_file: "../config/samples_aj34.csv"
+ref_seq: "../../figure_2_a-d/results/consensus_calling/final/AJ34_6_11_d0_FECES_MKV1_WG"

@@ -1,0 +1,6 @@
+Sample,genotype,condition,tissue,experiment,cage,labID
+AJ32_6_11_d0_ACCAAGCCAA-TACAAGGCGG,pet_store_f,ch,feces_d0,AJ32,1,AJ32_6_11_d0
+AJ32_6_11_d3_CCAATTGTCC-GCTCATACGC,pet_store_f,ch,feces_d3,AJ32,1,AJ32_6_11_d3
+AJ32_6_2_CCGTGGTGAA-CCGTCCAGTT,pet_store_f,ch,si,AJ32,1,AJ32_6_2
+AJ32_6_3_CGAATATTGG-CAGCACGGAA,pet_store_f,ch,liv,AJ32,1,AJ32_6_3
+AJ32_6_4_GGCTGCACAA-AGAGGTCCGA,pet_store_f,ch,lung,AJ32,1,AJ32_6_4

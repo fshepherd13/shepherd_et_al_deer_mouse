@@ -1,0 +1,15 @@
+import pandas as pd
+
+configfile: "../config/config.yaml"
+IDS = set(pd.read_csv(config["sample_file"])['sample'].str.rsplit('_',n=1).str[0]) #AJ30_1_2_MHV_RDRP
+SAMPLES = pd.read_csv(config["sample_file"])['sample'] #AJ30_1_2_MHV_RDRP_A1
+df=pd.read_csv(config["sample_file"])
+PET_STORE="AJ34_6_11_d0_FECES_MKV1_WG"
+IN_DIR = config["in_dir"]
+
+include: "rules/common.smk"
+include: "rules/call_variants.smk"
+
+rule all:
+    input:
+        expand("../results/variant_calling_{pet_store}/final/{id}.filtered.tsv", id = IDS, pet_store=PET_STORE)

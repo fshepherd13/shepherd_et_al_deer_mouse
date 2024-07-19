@@ -1,0 +1,264 @@
+---
+title: "Figure 2A-D"
+author: "Frances"
+date: "6/10/2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+```
+
+
+```{r}
+#Import data: a csv file containing the average frequencies of MuKV1 WG amplicon variants detected by the ivar pipeline. These frequencies are determined by comparing a pet store mouse to itself (i.e. an "intra-pet store mouse variant"), and each of the specific pathogen free (SPF) mouse genotypes (i.e. WT deer mouse, STAT2 KO deer mouse) to the petstore mice. 
+library(renv)
+renv::init()
+library(tidyverse)
+library(lemon)
+library(trackViewer)
+library(ggridges)
+library(ggalluvial)
+library(rwantshue)
+library(ggpubr)
+library(paletteer)
+
+
+meta <- read.csv(file ="Figure_2_a-d_metadata.csv", header = TRUE)
+
+#Column names of the tsv files produced by ivar
+col_names <- c("REGION", "POS",	"REF",	"ALT",	"GFF_FEATURE",	"REF_CODON",	"REF_AA",	"ALT_CODON",	"ALT_AA", "REF_DP_A", "REF_RV_A", "REF_QUAL_A", "ALT_DP_A", "ALT_RV_A", "ALT_QUAL_A", "ALT_FREQ_A", "TOTAL_DP_A", "PVAL_A", "PASS_A", "REF_DP_B", "REF_RV_B", "REF_QUAL_B", "ALT_DP_B", "ALT_RV_B", "ALT_QUAL_B", "ALT_FREQ_B", "TOTAL_DP_B", "PVAL_B", "PASS_B")
+```
+
+
+## Variants called against d0 feces consensus
+
+### Bottleneck dot plots
+
+```{r}
+files_d0_consensus <- list.files(path = "results/variant_calling_AJ34_6_11_d0_FECES_MKV1_WG/final/", pattern = ".tsv", full.names = TRUE)
+
+#Read in variant call files, merge with metadata
+dat_d0_consensus <- right_join(meta,
+                               read_delim(files_d0_consensus, id = "file", col_names = col_names, delim = "\t", skip = 1) %>%
+                                 mutate(file = str_split_i(file, "/", -1)),
+                               by = "file") %>%
+  mutate(average_variant_freq = rowMeans(cbind(ALT_FREQ_A, ALT_FREQ_B))) %>% #Calculate average variant frequency between the two replicates
+  mutate(experiment = factor(experiment),
+         tissue = factor(tissue),
+         petstore = factor(petstore),
+         cage = factor(cage),
+         collection_day = factor(collection_day)) %>%
+  filter(PASS_A == "TRUE" & PASS_B == "TRUE", 
+         POS < 8200) %>% #filter variants that are present much past the end of the ORF, these are gobblygook and there's no reliable consensus past this point anyway
+  as.data.frame()
+```
+
+
+iSNV alluvial plots
+
+```{r Make alluvial plot of d0 variant data- colored by SNP}
+alluvial_dat <- dat_d0_consensus %>%
+  dplyr::mutate(nt_change = paste0(REF, POS, ALT)) %>%
+  select(nt_change, sample_id, mouse_genotype, average_variant_freq) %>%
+  tidyr::complete(nt_change, nesting(sample_id, mouse_genotype)) %>%
+  mutate(average_variant_freq = ifelse(is.na(average_variant_freq), 0, average_variant_freq),
+         nt_change = factor(nt_change),
+         day = factor(sample_id)) %>%
+  group_by(sample_id, day) %>%
+  arrange(desc(average_variant_freq), .by_group = TRUE) %>%
+  mutate(id = ifelse(sample_id == "AJ34_6_11_d0",
+                     row_number(),
+                     NA)) %>%
+  group_by(nt_change) %>%
+  fill(id, .direction = "downup") %>%
+  ungroup() %>%
+  group_by(sample_id, day) %>%
+  mutate(scaled_freq = average_variant_freq / sum(average_variant_freq)*100,
+         isnv_proportion = ifelse(average_variant_freq > 0,
+                                  1/(length(nt_change[average_variant_freq > 0])),
+                                  0)) %>%
+  as.data.frame() %>%
+  arrange(id)
+
+levels(alluvial_dat$day) <- list("5"="AJ34_2_2",
+                                       "5" = "AJ34_3_2",
+                                       "0" = "AJ34_6_11_d0",
+                                       "1" = "AJ34_6_11_d1",
+                                       "2" = "AJ34_6_11_d2",
+                                       "3" = "AJ34_6_11_d3",
+                                       "4" = "AJ34_6_11_d4",
+                                       "5" = "AJ34_6_2")
+
+alluvial_dat$day <- factor(alluvial_dat$day, levels = c("0", "1", "2", "3", "4", "5"))
+alluvial_dat$id <- factor(alluvial_dat$id)
+
+is_lodes_form(subset(alluvial_dat, mouse_genotype == "petstore" & sample_id != "AJ34_6_2"), key = day, value = nt_change, id = id)
+
+#Generate color scheme
+scheme <- iwanthue()
+scheme <- iwanthue(seed = 42, force_init = TRUE)
+
+color_space <- list(
+	c(270, 360),	# hue range [0,360]
+	c(0, 100),		# chroma range [0,100]
+	c(25, 100))
+
+colors <- scheme$hex(n=154,
+           color_space = color_space) 
+colors
+
+#Make alluvial plots of d0 feces data vs the d5 SI data:
+
+feces_alluvial <- ggplot(data = subset(alluvial_dat, mouse_genotype == "petstore" & sample_id != "AJ34_6_2"),
+       aes(x = day,
+           y = isnv_proportion,
+           stratum = id, 
+           alluvium = id)) +
+  geom_flow(aes(fill = average_variant_freq), stat = "alluvium", width = 0.6) +
+  geom_stratum(aes(fill = average_variant_freq), na.rm = FALSE, linewidth = 0, width = 0.6) +
+  #scale_fill_manual(values = colors) +
+  scale_fill_paletteer_c("grDevices::Sunset", limits = c(0,1))+
+  scale_y_continuous(expand = c(0,0)) +
+  labs(title = "Petstore MKV1 nt change alluvial plot\nAJ34, petstore d0 feces-d5 feces",
+       x = "Collection day",
+       y = "iSNV proportion") +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(), 
+        axis.ticks.length = unit(0.25, "cm"),
+        text=element_text(color="black", size = 8),
+        axis.text=element_text(color="black"),
+        axis.line = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.ticks.length.x = unit(0.25, "cm"),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank())
+feces_alluvial
+
+wt_si_alluvial <- ggplot(data = subset(alluvial_dat, sample_id %in% c("AJ34_2_2", "AJ34_6_11_d0")),
+       aes(x = day,
+           y = isnv_proportion,
+           stratum = id, 
+           alluvium = id)) +
+  geom_flow(aes(fill = average_variant_freq), stat = "alluvium", width = 0.6) +
+  geom_stratum(aes(fill = average_variant_freq), na.rm = FALSE, linewidth = 0, width = 0.6) +
+  #scale_fill_manual(values = colors) +
+  scale_fill_paletteer_c("grDevices::Sunset", limits = c(0,1), name = "Average iSNV\nFrequency")+
+  scale_y_continuous(expand = c(0,0)) +
+  ggtitle("WT deer mouse MKV1 nt change alluvial plot\nAJ34 d0 petstore feces vs d5 SI")+
+  xlab("Collection day") +
+  ylab("iSNV proportion") +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(), 
+        legend.position = "none",
+        axis.ticks.length = unit(0.25, "cm"),
+        text=element_text(color="black", size = 8),
+        axis.text=element_text(color="black"),
+        axis.line = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.ticks.length.x = unit(0.25, "cm"),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank())
+
+
+stat2_si_alluvial <- ggplot(data = subset(alluvial_dat, sample_id %in% c("AJ34_3_2", "AJ34_6_11_d0")),
+       aes(x = day,
+           y = isnv_proportion,
+           stratum = id, 
+           alluvium = id)) +
+  #geom_alluvium(aes(fill = nt_change), na.rm = FALSE) +
+  geom_flow(aes(fill = average_variant_freq), stat = "alluvium", width = 0.6) +
+  geom_stratum(aes(fill = average_variant_freq), na.rm = FALSE, linewidth = 0, width = 0.6) +
+  #scale_fill_manual(values = colors) +
+  scale_fill_paletteer_c("grDevices::Sunset", limits = c(0,1), name = "Average iSNV\nFrequency")+
+  scale_y_continuous(expand = c(0,0)) +
+  ggtitle("STAT2 KO deer mouse MKV1 nt change alluvial plot\nAJ34 d0 petstore feces vs d5 SI")+
+  xlab("Collection day") +
+  ylab("iSNV proportion") +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank(), 
+        legend.position = "none",
+        axis.ticks.length = unit(0.25, "cm"),
+        text=element_text(color="black", size = 8),
+        axis.text=element_text(color="black"),
+        axis.line = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.ticks.length.x = unit(0.25, "cm"),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank())
+```
+
+
+With this visualization, you can see many more variants being lost from the initial dose. 
+
+Did a richness calculation of the variants present in the d0 feces vs the end hosts:
+
+```{r}
+isnv_richness <- alluvial_dat %>%
+  group_by(sample_id) %>%
+  summarise(richness = sum(average_variant_freq > 0))
+```
+
+Based on this, I calculate a percent change in variant richness in the deer mice vs the pet store mouse d0 feces:
+
+```{r}
+isnv_richness %>%
+  filter(sample_id %in% c("AJ34_2_2", "AJ34_3_2", "AJ34_6_11_d0")) %>%
+  mutate(percent_richness_change = ((1 - (richness / 144))*100))
+```
+
+
+I next made a graph showing the genome locations of all intrahost variants at d0 to show the diversity of variation in the initial dosing material:
+
+```{r iSNV genome locations of initial dosing material}
+dat_d0_consensus <- dat_d0_consensus %>%
+  mutate(change = ifelse(REF_AA == ALT_AA, "Synonymous", "Nonsynonymous"))
+  
+  
+iSNV_genome_plot <- dat_d0_consensus %>%
+  filter(sample_id == "AJ34_6_11_d0") %>%
+  droplevels() %>%
+  ggplot() +
+    geom_segment(aes(x = POS, xend = POS, y = 0.02, yend = 0.04), color = "#FF6600") +
+    scale_y_continuous(limits = c(-0.02,0.05)) +
+    scale_x_continuous(name = "MKV1 genome position", limits = c(0, 8099))+
+    #scale_color_manual(values = c("#9966FF", "#FF6600")) +
+    ggtitle("AJ34 Pet store d0 feces iSNVs") +
+    annotate("rect", xmin = 0, xmax = 8099, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") +
+    annotate("rect", xmin = 754, xmax = 1269, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #L peptide
+    annotate("rect", xmin = 1269, xmax = 2373, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #VP0 peptide
+    annotate("rect", xmin = 2373, xmax = 3042, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #VP3 peptide
+    annotate("rect", xmin = 3042, xmax = 3882, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #VP1 peptide
+    annotate("rect", xmin = 3882, xmax = 4215, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #2A peptide 
+    annotate("rect", xmin = 4215, xmax = 4710, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #2B peptide
+    annotate("rect", xmin = 4710, xmax = 5715, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #2C peptide
+    annotate("rect", xmin = 5715, xmax = 6000, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #3A peptide
+    annotate("rect", xmin = 6000, xmax = 6081, ymin= -0.02, ymax = 0.02, fill = "white", color = "black") + #3B peptide
+    annotate("rect", xmin = 6081, xmax = 6651, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #3C peptide
+    annotate("rect", xmin = 6651, xmax = 8055, ymin = -0.02, ymax = 0.02, fill = "white", color = "black") + #3D peptide
+    annotate("rect", xmin = 393, ymin = -0.02, xmax = 653, ymax = 0.02, fill = "darkgray", linewidth = 0, alpha = 0.3) + #Masked primer 2 site
+    annotate("rect", xmin = 1035, ymin = -0.02, xmax = 1615, ymax = 0.02, fill = "darkgray", linewidth = 0, alpha = 0.3) + #Masked primers 4 & 5 sites
+    annotate("rect", xmin = 1984, ymin = -0.02, xmax = 3522, ymax = 0.02, fill = "darkgray", linewidth = 0, alpha = 0.3) + #Masked primers 7-11 sites
+    annotate("rect", xmin = 4543, ymin = -0.02, xmax = 6056, ymax = 0.02, fill = "darkgray", linewidth = 0, alpha = 0.3) + #Masked primer 15-19 site
+    annotate("rect", xmin = 6460, ymin = -0.02, xmax = 6684, ymax = 0.02, fill = "darkgray", linewidth = 0, alpha = 0.3) + #Masked primer 21 site
+    annotate("rect", xmin = 7079, ymin = -0.02, xmax = 7297, ymax = 0.02, fill = "darkgray", linewidth = 0, alpha = 0.3) + #Masked primer 23 site
+    annotate("rect", xmin = 7706, ymin = -0.02, xmax = 7902, ymax = 0.02, fill = "darkgray", linewidth = 0, alpha = 0.3) + #Masked primer 25 site
+    theme_bw() +
+    theme(panel.grid = element_blank(),
+          panel.border = element_blank(), 
+          axis.line = element_line(),
+          axis.ticks.length = unit(0.25, "cm"),
+          legend.position = "none",
+          text=element_text(color="black", size = 12),
+          axis.text=element_text(color="black"),
+          axis.line.y = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          axis.title.y = element_blank())
+
+iSNV_genome_plot
+```
+

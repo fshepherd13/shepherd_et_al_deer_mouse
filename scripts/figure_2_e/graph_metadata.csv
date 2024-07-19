@@ -1,0 +1,12 @@
+name,genotype,tissue
+AJ32_1_2_SI_MKV1_WG,wt_peromyscus,si
+AJ32_2_2_SI_MKV1_WG,wt_peromyscus,si
+AJ32_3_2_SI_MKV1_WG,stat2_peromyscus,si
+AJ32_4_2_SI_MKV1_WG,stat2_peromyscus,si
+AJ32_6_11_d0_FECES_MKV1_WG,petstore,feces
+AJ32_6_2_SI_MKV1_WG,petstore,si
+AJ34_2_2_SI_MKV1_WG,wt_peromyscus,si
+AJ34_3_2_SI_MKV1_WG,stat2_peromyscus,si
+AJ34_5_2_SI_MKV1_WG,ifnlar_mus,si
+AJ34_6_11_d0_FECES_MKV1_WG,petstore,feces
+AJ34_6_2_SI_MKV1_WG,petstore,feces

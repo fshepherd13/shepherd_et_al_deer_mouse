@@ -1,0 +1,20 @@
+import pandas as pd
+
+SAMPLES = pd.read_csv(config["sample_file"])['Sample']
+IN_DIR = config["in_dir"]
+EXP = config["experiment"]
+NUM=["%.3d" % i for i in range(0,100)]
+
+include: "rules/common.smk"
+include: "rules/trim.smk"
+include: "rules/modify_and_concat.smk"
+include: "rules/trinity.smk"
+include: "rules/blast.smk"
+include: "rules/blast_lineage_assign.smk"
+include: "rules/salmon.smk"
+include: "rules/summarise_transcripts.smk"
+
+rule all:
+    input:
+        expand("../results/final/{exp}_sp_counts.csv", exp=EXP),
+        expand("../results/final/{exp}_family_counts.csv", exp=EXP)

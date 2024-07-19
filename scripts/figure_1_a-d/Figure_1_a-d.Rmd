@@ -1,0 +1,391 @@
+---
+title: "Figure 1 A-D"
+author: "Frances Shepherd"
+date: "6/10/24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r read species data}
+#if (!require("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+
+#BiocManager::install("apeglm")
+
+library(tximport)
+library(DESeq2)
+library(tidyverse)
+library(apeglm)
+library(factoextra)
+
+meta <- read.csv("Figure_1_a-d_samples.csv", header = TRUE) %>%
+  mutate(genotype = factor(genotype),
+         condition = factor(condition),
+         tissue = factor(tissue),
+         experiment = factor(experiment),
+         genotype_condition = factor(genotype_condition, levels = c("wt_deer_mouse.spf", "STAT2_deer_mouse.spf", "IFNLAR_mus.ch", "wt_deer_mouse.ch", "STAT2_deer_mouse.ch", "pet_store"))) %>%
+  droplevels()
+```
+
+Read in taxonomy information for Trinity contigs. Need to make some adjustments to the names so they're consistent. Some contigs were assigned two different species that are closely related and should be counted together.
+The main changes that need to be made are:
+ change to 
+"Hamster parvovirus" change to "Rodent protoparvovirus 1"
+"Murine astrovirus" change to "Murine astrovirus 1"
+Collapse "Porcine picobirnavirus" and "Picobirnavirus sp." to "Murine picobirnavirus"
+
+```{r}
+names_to_fix <- data.frame(old = c("Mouse adenovirus 2 strain K87", "Hamster parvovirus", "Murine astrovirus\\s?$", "Porcine picobirnavirus", "Picobirnavirus sp.", "Picobirnaviridae sp.", "Kobuvirus 05VZ", "Eidolon dupreanum kobuvirus", "Canine kobuvirus", "Aichivirus A", "Marmot kobuvirus", "Mouse kobuvirus M-5/USA/2010", "Kobuvirus sp.", "Civet kobuvirus", "Coypu kobuvirus", "Ungulate erythroparvovirus 1", "Porcine astrovirus 2", "Mamastrovirus 3", "Bovine picobirnavirus", "Chicken picobirnavirus", "Feline picobirnavirus", "Fox fecal picobirnavirus", "Gallid alphaherpesvirus 2", "Human cosavirus E/D", "Hepacivirus C", "Marmot picobirnavirus", "Mongoose picobirnavirus", "Murine picobirnavirus gcode 6", "Orthopicobirnavirus hominis", "Otarine picobirnavirus", "Picobirnavirus dog/KNA/2015", "Picobirnavirus HK-2014", "Picobirnavirus PREDICT_PbV-9", "Rabbit picobirnavirus", "Rabbit picobirnavirus 3", "Rat picobirnavirus", "Rodent Cardiovirus", "Rodent dependoparvovirus 2", "Simian picobirnavirus", "Traeger narna-like virus", "Astrovirus rat/RS297/HKG/2008", "Grey teal picobirnavirus X", "Frog pestivirus", "Pestivirus D", "Cardiovirus B", "Picobirnavirus 3", "Rodent astrovirus", "Murine picobirnavirus 3"),
+                   new = c("Murine mastadenovirus B", "Rodent protoparvovirus 1", "Murine astrovirus 1", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine erythroparvovirus", "Murine astrovirus 1", "Murine astrovirus 1", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine alphaherpesvirus", "Murine cosavirus", "Mus musculus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "TMEV", "Dependoparvovirus sp.", "Murine picobirnavirus", "Narnavirus sp.", "Murine astrovirus 1", "Murine picobirnavirus", "Murine pestivirus", "Murine pestivirus", "TMEV", "Murine picobirnavirus", "Murine astrovirus 1", "Murine picobirnavirus"))
+
+fix_taxonomy_files <- function(exp) {
+  file_name <- paste0(exp, "_transcript_lineages.csv", sep="")
+  tax_file <- read.csv(file.path("data/taxonomy_files", file_name), header = TRUE)
+  
+  #Fix species names by referencing the names_to_fix dataframe
+  for (i in seq(1:nrow(names_to_fix))) {
+    tax_file$species <- gsub(names_to_fix$old[i], names_to_fix$new[i], tax_file$species)
+  }
+  return(tax_file)
+}
+
+aj30_transcript_lineages <- fix_taxonomy_files("aj30")
+aj32_transcript_lineages <- fix_taxonomy_files("aj32")
+aj34_transcript_lineages <- fix_taxonomy_files("aj34")
+aj35_transcript_lineages <- fix_taxonomy_files("aj35")
+```
+
+
+```{r}
+#Function to use tximport to merge salmon and transcript lineage information for a given experiment
+
+tximport_exp <- function(exp) {
+  samples <- subset(meta, experiment == toupper(exp))$sample
+  tx2gene <- get(paste0(exp,"_transcript_lineages")) #Read in transcript lineage file for the given experiment
+  files <- file.path("data/salmon/", samples, "quant.sf") #Retrieve list of salmon quant.sf files for the experiment
+  names(files) <- samples
+  txi <- tximport(files, type="salmon", tx2gene=tx2gene[c("trinity_id", "species")], ignoreTxVersion = FALSE)
+  return(txi)
+}
+
+txi_aj30 <- tximport_exp("aj30")
+txi_aj32 <- tximport_exp("aj32")
+txi_aj34 <- tximport_exp("aj34")
+txi_aj35 <- tximport_exp("aj35")
+
+## Data wrangling to create a combined tximport list
+
+abundance <-Reduce(function(a,b){
+        ans <- merge(a,b,by="row.names",all=T)
+        row.names(ans) <- ans[,"Row.names"]
+        ans[,!names(ans) %in% "Row.names"]
+        }, list(txi_aj30$abundance,
+                txi_aj32$abundance,
+                txi_aj34$abundance,
+                txi_aj35$abundance))
+
+
+counts <-Reduce(function(a,b){
+        ans <- merge(a,b,by="row.names",all=T)
+        row.names(ans) <- ans[,"Row.names"]
+        ans[,!names(ans) %in% "Row.names"]
+        }, list(txi_aj30$counts,
+                txi_aj32$counts,
+                txi_aj34$counts,
+                txi_aj35$counts))
+
+length <-Reduce(function(a,b){
+        ans <- merge(a,b,by="row.names",all=T)
+        row.names(ans) <- ans[,"Row.names"]
+        ans[,!names(ans) %in% "Row.names"]
+        }, list(txi_aj30$length,
+                txi_aj32$length,
+                txi_aj34$length,
+                txi_aj35$length))
+
+countsFromAbundance <- "no"
+
+txi <- list(abundance, counts, length, countsFromAbundance)
+names(txi) <- c("abundance", "counts", "length", "countsFromAbundance")
+txi$abundance <- as.matrix(txi$abundance)
+txi$abundance[is.na(txi$abundance)] <- 0
+txi$counts <- as.matrix(txi$counts)
+txi$counts[is.na(txi$counts)] <- 0
+txi$length <- as.matrix(txi$length)
+txi$length[is.na(txi$length)] <- 0
+
+
+txi$length[txi$length == 0] <- 1  #edit effective transcript lengths of 0 to 1
+
+#Create the DESeq dataset from the tximport info
+ddsTxi <- DESeqDataSetFromTximport(txi,
+                                   colData = meta,
+                                   design = ~ genotype_condition) #For now, just choose simple model design to run create the DESeq dataset
+
+
+dds <- DESeq(ddsTxi)
+
+#Save normalized counts in a dataframe
+normalized_counts <- counts(dds, normalized = TRUE)
+
+#Try to connect the results with their taxonomy
+taxonomy <- rbind(aj30_transcript_lineages, 
+                  aj32_transcript_lineages,
+                  aj34_transcript_lineages,
+                  aj35_transcript_lineages) %>%
+  distinct(superkingdom, phylum, class, order, family, genus, species)
+
+all(rownames(normalized_counts) == taxonomy$species) #Check if the rownames in the normalized counts matrices (will be pathogen species names) are in the taxomy file in the same order (will be false)
+
+taxonomy <- taxonomy[match(rownames(normalized_counts), taxonomy$species),] #Match up the order of species in the taxonomy file to the order of rownames (species names) in the normalized count matrix
+all(rownames(normalized_counts) == taxonomy$species)
+```
+
+
+Create graphs of normalized count data but exclude viral families we don't care about (i.e. phages, insect/plant infecting viruses)
+```{r}
+exclude <- read.csv("RNAseq excluded viral families.csv", header=FALSE)[,1]
+
+#Define function to negate %in% (used for searching for unwanted viral families)
+`%ni%` <- Negate(`%in%`)
+
+#First create dataframe of normalized virus counts
+normalized_counts_viruses <- cbind(normalized_counts, taxonomy) %>%
+  filter(superkingdom == "Viruses") %>%
+  filter(family %ni% exclude & family != "") %>%
+  tidyr::gather(., key="sample", value=normalized_counts, contains("AJ")) %>% #Turns virus dataframe to long
+  merge(., meta, by = "sample") %>% #Merge with metadata so we can filter/graph based on other variables
+  mutate(batch = as.factor(batch),
+         tissue = as.factor(tissue),
+         species_new = recode_factor(species,
+                                     "Norwalk virus" = "Murine norovirus",
+                                     "Murine coronavirus" = "Murine Hepatitis Virus",
+                                     "Putative Murine Kobuvirus 2" = "MnPV1",
+                                     "Cardiovirus B" = "TMEV"))
+
+#Create 2nd dataframe that filters down to only SI information.
+normalized_counts_viruses_si_unfiltered <- normalized_counts_viruses %>%
+  filter(tissue == "si") %>%
+  droplevels() %>%
+  group_by(experiment, cage, species_new) %>%
+  mutate(log_transcripts_count = log10(normalized_counts+1)) %>%
+  mutate(genotype = factor(genotype, levels = c("pet_store", "wt_deer_mouse", "STAT2_deer_mouse", "IFNLAR_mus")),
+         species_new = factor(species_new),
+         experiment = factor(experiment),
+         genotype_replicate = factor(genotype_replicate, levels = c("pet_store", "wt_deer_mouse_1", "wt_deer_mouse_2", "wt_deer_mouse_3", "STAT2_deer_mouse_1", "STAT2_deer_mouse_2", "STAT2_deer_mouse_3", "STAT2_deer_mouse_4", "IFNLAR_mus"))) %>%
+  as.data.frame()
+
+#Create a list populated by the levels of the species left in the dataset after filtering. These include viruses with reads in the small intestines of at least one mouse in the experimental group.
+spp_keep <- levels(normalized_counts_viruses_si_unfiltered$species_new)
+spp_keep <- spp_keep[spp_keep %ni% c('Human gammaherpesvirus 4', 'Mamastrovirus 3', 'Astrovirus VA4', 'Picornaviridae sp.', 'Mycoreovirus 1', 'Tembusu virus', 'Murine pestivirus', 'Enterovirus A')] #Filter out viruses that are probably contaminants or are difficult to pinpoint to their actual species. Human gammaherpesvirus 4 is probably a contaminant, the two astroviruses are ambiguous and at such low levels/not present in the deer mice anyway that it's not informative, picornaviridae sp. is not at the species level, and mycoreovirus 1 is a fungi-infecting virus that slipped through the cracks. Tembusu and pestiviruses were very short contigs and blasting by hand yielded dubious results so these should be excluded as well.
+#Filtering out paramyxo and pneumoviruses as well since these are not present in small intestine
+
+#Filter the virus SI data on this list:
+normalized_counts_viruses_si <- normalized_counts_viruses_si_unfiltered %>%
+  filter(species_new %in% spp_keep) %>%
+  group_by(species_new) %>%
+  filter(any(normalized_counts > 0)) %>%
+  droplevels() %>%
+  mutate(species_new = factor(species_new, levels = c("Murine mastadenovirus B", "Gammaarterivirus lacdeh", "Murine astrovirus 1", "Murine astrovirus 2", "Murine norovirus", "Murine sapovirus", "Fievel mouse coronavirus", "Murine Hepatitis Virus", "Narnavirus sp.", "Dependoparvovirus sp.", "Mouse adeno-associated virus 1", "Rodent protoparvovirus 1", "Murine picobirnavirus", "Murine kobuvirus 1", "MnPV1", "TMEV", "Rabovirus D")))
+```
+
+Create SPF dataset
+```{r}
+spf_si_dat <- 
+  normalized_counts_viruses_si %>%
+  filter(condition == "spf")
+  
+
+ggplot(data = spf_si_dat, aes(x = genotype_replicate, 
+                              y = fct_rev(species_new),
+                              fill = normalized_counts)) +
+  geom_tile(color = "black") +
+  scale_fill_gradient(name = "normalized log10\ntranscript count",
+                      limits = c(0, 7),
+                      breaks = c(0, 3.5, 7),
+                      na.value = "white", low="white", high = "red") + 
+  theme_bw() +
+  labs(title = "Deer mouse SPF SI RNAseq data-SI only\nAJ30, AJ32", x = "Mouse genotype", y = "Virus family") +
+  theme(plot.title = element_text(size = 15),
+        panel.grid.major = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text = element_text(size = 10))
+```
+
+
+Make a graph of the feces shedding data from pet store mouse (Figure 1B).
+```{r}
+feces_data <- normalized_counts_viruses %>%
+  mutate(log_transcripts_count = log10(normalized_counts+1)) %>%
+  filter(genotype == "pet_store" & grepl("feces",tissue)) %>%
+  filter(species_new %in% spp_keep) %>%
+  group_by(species_new) %>%
+  filter(any(normalized_counts > 0)) %>%
+  droplevels() %>%
+  as.data.frame() %>%
+  mutate(species_new = factor(species_new, levels = c("Murine mastadenovirus B", "Murine astrovirus 1", "Murine astrovirus 2", "Murine norovirus", "Murine sapovirus", "Circoviridae sp.", "Fievel mouse coronavirus", "Murine Hepatitis Virus", "Murine alphaherpesvirus", "Narnavirus sp.", "Betapapillomavirus 5", "Rodent bocaparvovirus 2", "Murine erythroparvovirus", "Murine picobirnavirus", "Murine picobirnavirus 3", "Rotavirus A", "Murine kobuvirus 1", "MnPV1", "TMEV", "Enterovirus C", "Murine cosavirus", "Rabovirus D")))
+                              
+feces_graph_dat <- feces_data %>%
+                        group_by(species_new) %>%
+                        filter(any(log_transcripts_count > 2)) %>%
+                        droplevels()
+
+feces_graph <- ggplot(data = feces_graph_dat,
+                      aes(x = tissue, y = log_transcripts_count, color = species_new, group = interaction(species_new, experiment))) +
+  geom_point(size = 2) +
+  geom_line() +
+  facet_wrap(species_new ~., nrow = 4, labeller = labeller(species_new = label_wrap_gen(5))) +
+  geom_hline(data = (spf_si_avg %>%
+                       filter(species_new %in% levels(feces_graph_dat$species_new)) %>%
+                       mutate(log_transcripts_count_new = log_average_transcript_count)), 
+             aes(yintercept = log_transcripts_count_new,
+                 linetype = "Average SPF reads")) +
+  scale_linetype_manual(name = "", values = c("dotted", "dotted", "dotted", "dotted", "dotted")) + 
+  ggtitle("Pet store fecal shedding data\nRNAseq from AJ32, AJ34, AJ35") +
+  xlab("Feces") +
+  ylab("Log10 transcript counts") +
+  labs(color = "Virus") +
+  theme_bw() +
+  theme(plot.title = element_text(size = 15),
+        panel.grid.major = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12, angle = 90, hjust = 1),
+        strip.text = element_text(size = 10),
+        legend.position = "right")
+feces_graph
+```
+
+
+Exposure vs transmission frequency bubble graphs (Figure 1C)
+```{r}
+#Adjust the coh_si_data_spp dataframe to have a presence/absence column. If there are greater than 0 reads for a given virus, assign valuee of "Present" to the virus. If 0 reads, assign value of "Absent". Also create new variable that specifies whether the mouse is exposed or petstore
+coh_si_data_spp <- normalized_counts_viruses_si %>% 
+  filter(condition == "ch") %>%
+  dplyr::mutate(presence = factor((ifelse(log_transcripts_count > 0, "Present", "Absent")))) %>%
+  dplyr::mutate(ch_vs_ps = recode(genotype, "pet_store"="ps", "wt_deer_mouse"="ch", "STAT2_deer_mouse" = "ch", "IFNLAR_mus" = "ch"))
+
+#Out of the mice that were exposed to a positive pet store mouse, find the number of cohoused mice that became positive.
+exposure_transmission_freq_dat <- coh_si_data_spp %>%
+  group_by(genotype) %>% #Group mice by genotype
+  dplyr::mutate(group_size = n_distinct(animalID)) %>% #calculate number of mice of each genotype, add to dataframe (denominator for calculating exposure frequency)
+  group_by(experiment, cage, species_new) %>% #Within each experiment and group of animals, and looking at each viral species...
+  filter(any(ch_vs_ps=="ps" & presence=="Present")) %>% #...keep any groupings where the virus is present in the pet store mouse
+  group_by(genotype, species_new, presence, group_size) %>% #Within each genotype and viral species (only considering EXPOSED animals)
+  dplyr::summarise(n=n()) %>% #...summarize the number of animals that were present or absent for that virus
+  group_by(genotype, species_new) %>%
+  dplyr::mutate(num_exposed = sum(n), #Calculate exposure number (sums present + absent for animals in this dataframe subset only)
+         exposure_freq = (num_exposed/group_size)*100, #Exposure frequency is based on the total group size
+         transmission_freq = (n/num_exposed)*100,
+         presence = presence) %>%
+  subset(genotype!="pet_store") %>%
+  group_by(genotype, species_new) %>%
+  complete(presence = rep(c("Absent", "Present"))) %>%
+  fill(exposure_freq, .direction = "downup") %>%
+  fill(group_size, .direction = "downup") %>%
+  tidyr::replace_na(list(transmission_freq = 0)) %>%
+  droplevels()
+
+
+summary_dot_plot_rnaseq <- filter(exposure_transmission_freq_dat,
+                                  presence == "Present") %>%
+  ggplot(aes(x=genotype,
+             y=fct_rev(species_new),
+             fill = transmission_freq,
+             size = exposure_freq)) +
+    geom_point(shape = 21)+
+    scale_size(range = c(1,10),
+               limits = c(0, 100),
+               breaks = c(0, 25, 50, 75, 100),
+               name = "Exposure\nfrequency (%)") +
+    scale_fill_gradient2(low = "white",
+                         mid = "yellow",
+                         high = "red",
+                         midpoint = 50,
+                         name = "Transmission\nfrequency (%)",
+                         breaks = c(0,25, 50, 75, 100),
+                         limits = c(0,100)) +
+    labs(title = "Deer mouse virus transmission\nRNAseq; AJ30, AJ32, AJ34, AJ35", x = "Mouse genotype", y = "Virus species") +
+    coord_fixed(ratio=1) +
+    theme_bw() +
+    theme(plot.title = element_text(size = 12),
+        panel.grid.major = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text = element_text(size = 10))
+summary_dot_plot_rnaseq
+```
+
+PCA plot- viral family abundance (Figure 1D)
+
+```{r}
+fam_pca_dat <- normalized_counts_viruses_si %>%
+  group_by(sample, family) %>%
+  dplyr::summarise(family_counts_sum = sum(normalized_counts)) %>%
+  mutate(log_transcripts_count = log10(family_counts_sum +1)) %>% #Log transform count data
+  select(-c("family_counts_sum")) %>%
+  tidyr::spread(., family, log_transcripts_count) %>%
+  merge(., meta, by = "sample") %>%
+  mutate(genotype_ch = paste(genotype, condition),
+         genotype = factor(genotype, levels = c("pet_store", "wt_deer_mouse", "STAT2_deer_mouse", "IFNLAR_mus")))
+
+rownames(fam_pca_dat) = fam_pca_dat$animalID
+fam_pca_dat.active <- fam_pca_dat[,2:10] #Extract only active variables, i.e. the viral family count data columns
+fam_pca_dat.active <- fam_pca_dat.active[ , which(apply(fam_pca_dat.active, 2, var) != 0)] # remove columns where all the viral counts are 0
+
+res.pca <- prcomp(fam_pca_dat.active, scale = TRUE) #running PCA on just the viral count data
+
+#Visualize eigenvalues
+fviz_eig(res.pca)
+
+fviz_pca_biplot(res.pca, repel = TRUE,
+                col.var = "#2E9FDF", # Variables color
+                col.ind = "#696969"  # Individuals color
+                )
+
+genotype_ch <- factor(fam_pca_dat$genotype_condition, levels = c("pet_store ch", "wt_deer_mouse ch", "STAT2_deer_mouse ch", "IFNLAR_mus ch", "wt_deer_mouse spf", "STAT2_deer_mouse spf"))
+condition <- as.factor(fam_pca_dat$condition)
+
+fviz_pca_ind(res.pca,
+             label = "none",
+             geom.ind = "point",
+             alpha = 0)+
+  geom_point(size = 5,
+             alpha = 0.5,
+             aes(shape = factor(fam_pca_dat$condition),
+                 color = factor(fam_pca_dat$genotype)))+
+  scale_shape_manual(name = "Condition", 
+                     values=c(16,17)) +
+  scale_color_manual(name = "Mouse genotype", values = c("#FF6600", "#EAC435", "#345995", "#03CEA4")) +
+  ggtitle("Deer mouse PCA plot\nAJ30, AJ32, AJ34, AJ35") +
+  labs(caption = "PCA on the normalized, log-transformed\nabundance of eukaryotic viral families in all deer mice experiments") +
+  theme(text = element_text(size = 20))
+  
+
+#ggsave("plots/Deer mouse PCA ind plot.pdf", height = 8, width = 10)
+
+fviz_pca_biplot(res.pca,
+                label = "var",
+                alpha.ind = 0)+
+  geom_point(size = 5,
+             aes(shape = factor(fam_pca_dat$condition),
+                 color = factor(fam_pca_dat$genotype),
+                 alpha = factor(fam_pca_dat$genotype)))+
+  scale_shape_manual(name = "Condition", 
+                     values=c(16,17)) +
+  scale_color_manual(name = "Mouse genotype", values = c("#FF6600", "#EAC435", "#345995", "#03CEA4")) +
+  scale_alpha_manual(name = "Mouse genotype", values = c(0.5, 0, 0, 0.5)) +
+  ggtitle("Deer mouse biplot PCA plot\nAJ30, AJ32, AJ34, AJ35") +
+  labs(caption = "PCA biplot on the normalized, log-transformed\nabundance of eukaryotic viral families in all deer mice experiments")+
+  theme(text = element_text(size = 20))
+```
+
+
+
+```{r}
+sessionInfo()
+save.image()
+```
+

@@ -1,0 +1,224 @@
+---
+title: "Figure 1E"
+author: "Frances Shepherd"
+date: "6/10/24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r read species data}
+library(tidyverse)
+library(DESeq2)
+library(tximport)
+library(gridExtra)
+
+#Define function to negate %in% (used for searching for unwanted viral families)
+`%ni%` <- Negate(`%in%`)
+
+
+#Read in file of viral families to exclude from analysis. Includes phages, insect/plant infecting viruses, or probable contaminants (like flu)
+exclude <- read.csv("../figure_1_e/RNAseq excluded viral families.csv", header=FALSE)[,1]
+
+
+#read in sample metadata table
+meta <- read.csv("samples_aj39.csv", header = TRUE, stringsAsFactors = TRUE) %>%
+  mutate(genotype = factor(genotype, levels = c("wt_deer_mouse", "STAT2_deer_mouse", "IFNLAR_mus", "pet_store_f")))
+```
+
+
+```{r}
+names_to_fix <- data.frame(old = c("Mouse adenovirus 2 strain K87", "Hamster parvovirus", "Murine astrovirus\\s?$", "Porcine picobirnavirus", "Picobirnavirus sp.", "Picobirnaviridae sp.", "Kobuvirus 05VZ", "Eidolon dupreanum kobuvirus", "Canine kobuvirus", "Aichivirus A", "Marmot kobuvirus", "Mouse kobuvirus M-5/USA/2010", "Kobuvirus sp.", "Civet kobuvirus", "Coypu kobuvirus", "Ungulate erythroparvovirus 1", "Porcine astrovirus 2", "Mamastrovirus 3", "Bovine picobirnavirus", "Chicken picobirnavirus", "Feline picobirnavirus", "Fox fecal picobirnavirus", "Gallid alphaherpesvirus 2", "Human cosavirus E/D", "Hepacivirus C", "Marmot picobirnavirus", "Mongoose picobirnavirus", "Murine picobirnavirus gcode 6", "Orthopicobirnavirus hominis", "Otarine picobirnavirus", "Picobirnavirus dog/KNA/2015", "Picobirnavirus HK-2014", "Picobirnavirus PREDICT_PbV-9", "Rabbit picobirnavirus", "Rabbit picobirnavirus 3", "Rat picobirnavirus", "Rodent Cardiovirus", "Rodent dependoparvovirus 2", "Simian picobirnavirus", "Traeger narna-like virus", "Astrovirus rat/RS297/HKG/2008", "Grey teal picobirnavirus X", "Frog pestivirus", "Pestivirus D", "Cardiovirus B", "Picobirnavirus 3", "Rodent astrovirus", "Murine picobirnavirus 3"),
+                   new = c("Murine mastadenovirus B", "Rodent protoparvovirus 1", "Murine astrovirus 1", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine kobuvirus 1", "Murine erythroparvovirus", "Murine astrovirus 1", "Murine astrovirus 1", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine alphaherpesvirus", "Murine cosavirus", "Mus musculus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "Murine picobirnavirus", "TMEV", "Dependoparvovirus sp.", "Murine picobirnavirus", "Narnavirus sp.", "Murine astrovirus 1", "Murine picobirnavirus", "Murine pestivirus", "Murine pestivirus", "TMEV", "Murine picobirnavirus", "Murine astrovirus 1", "Murine picobirnavirus"))
+
+
+#Function to fix taxonomy names in the trinity transcript lineage csv file using the above dataframe:
+fix_taxonomy_files <- function(exp) {
+  file_name <- paste0(exp, "_transcript_lineages.csv", sep="")
+  tax_file <- read.csv(file.path("data/taxonomy_files", file_name), header = TRUE)
+  
+  #Fix species names by referencing the names_to_fix dataframe
+  for (i in seq(1:nrow(names_to_fix))) {
+    tax_file$species <- gsub(names_to_fix$old[i], names_to_fix$new[i], tax_file$species)
+  }
+  return(tax_file)
+}
+
+
+#Apply function to the AJ39 transcript lineage file
+aj39_transcript_lineages <- fix_taxonomy_files("aj39")
+```
+
+
+Create tximport for AJ39 data:
+```{r}
+#Function to use tximport to merge salmon and transcript lineage information for a given experiment
+
+tximport_exp <- function(exp) {
+  samples <- meta$sample
+  tx2gene <- get(paste0(exp,"_transcript_lineages")) #Read in transcript lineage file for the given experiment
+  files <- file.path("data/salmon/", samples, "quant.sf") #Retrieve list of salmon quant.sf files for the experiment
+  names(files) <- samples
+  txi <- tximport(files, type="salmon", tx2gene=tx2gene[c("trinity_id", "species")], ignoreTxVersion = FALSE)
+  return(txi)
+}
+
+txi_aj39 <- tximport_exp("aj39")
+
+#Create the DESeq dataset from the tximport info
+ddsTxi <- DESeqDataSetFromTximport(txi_aj39,
+                                   colData = meta,
+                                   design = ~ genotype) #For now, just choose simple model design to run create the DESeq dataset
+
+#Normalize counts with DESeq algorithm
+dds <- DESeq(ddsTxi)
+
+
+#Save normalized counts in a dataframe
+normalized_counts <- counts(dds, normalized = TRUE)
+
+
+#Try to connect the results with their taxonomy
+taxonomy <- aj39_transcript_lineages %>%
+  distinct(superkingdom, phylum, class, order, family, genus, species)
+
+all(rownames(normalized_counts) == aj39_transcript_lineages$species) #Check if the rownames in the normalized counts matrices (will be pathogen species names) are in the taxomy file in the same order (will be false)
+
+aj39_transcript_lineages <- aj39_transcript_lineages[match(rownames(normalized_counts), aj39_transcript_lineages$species),] #Match up the order of species in the taxonomy file to the order of rownames (species names) in the normalized count matrix
+all(rownames(normalized_counts) == aj39_transcript_lineages$species)
+```
+
+Create graphs of normalized count data but exclude viral families we don't want
+```{r}
+#First create dataframe of normalized virus counts
+normalized_counts_viruses <- cbind(normalized_counts, aj39_transcript_lineages) %>%
+  filter(superkingdom == "Viruses") %>%
+  filter(family %ni% exclude & family != "") %>%
+  tidyr::gather(., key="sample", value=normalized_counts, contains("AJ")) %>% #Turns virus dataframe to long
+  merge(., meta, by = "sample") %>% #Merge with metadata so we can filter/graph based on other variables
+  mutate(tissue = as.factor(tissue),
+         species_new = recode_factor(species,
+                                     "Norwalk virus" = "Murine norovirus",
+                                     "Murine coronavirus" = "Murine Hepatitis Virus",
+                                     "Putative Murine Kobuvirus 2" = "MnPV1",
+                                     "Cardiovirus B" = "TMEV"))
+
+#Create 2nd dataframe that contains only SI and fecal viral reads
+normalized_counts_viruses_si_feces <- normalized_counts_viruses %>%
+  filter(tissue %in% c("si", "feces")) %>%
+  droplevels() %>%
+  group_by(experiment, cage, species_new) %>%
+  mutate(log_transcripts_count = log10(normalized_counts+1)) %>%
+  mutate(genotype = factor(genotype, levels = c("pet_store_f", "wt_deer_mouse", "STAT2_deer_mouse", "IFNLAR_mus")),
+         species_new = factor(species_new),
+         experiment = factor(experiment)) %>%
+  as.data.frame()
+
+#Create a list populated by the levels of the species left in the dataset after filtering. These include viruses with reads in the small intestines of at least one mouse in the experimental group.
+#Show viruses leftover after this initial filtering.
+levels(normalized_counts_viruses_si_feces$species_new)
+```
+
+```{r}
+#This is a long list, many viruses are kind of ambiguous and are probably due to the contig being too short to definitively map to a given virus. Additionally, some of these have no reads in the small intestine because they may have been present in other tissues. To simplify this, create a smaller list of viruses to focus on:
+spp_keep <- c("Murine Hepatitis Virus", "MnPV1", "TMEV", "Fievel mouse coronavirus", "Murine kobuvirus 1", "Murine astrovirus 1", "Murine astrovirus 2")
+
+#Filter the virus SI data on this list, and keep only feces and small intestine data:
+normalized_counts_viruses_si_feces_filtered <- normalized_counts_viruses_si_feces %>%
+  filter(species_new %in% spp_keep) %>%
+  group_by(species_new) %>%
+  filter(any(normalized_counts > 0)) %>%
+  droplevels() %>%
+  mutate(species_new = factor(species_new, levels = c("Murine astrovirus 1", "Murine astrovirus 2", "Fievel mouse coronavirus", "Murine Hepatitis Virus", "Murine kobuvirus 1", "MnPV1", "TMEV")))
+```
+
+Species-level SPF heatmaps plots with a few select viral species
+```{r}
+normalized_counts_viruses_si_feces_filtered %>%
+  filter(condition == "spf") %>%
+  droplevels() %>%
+  group_by(labID) %>%
+  tidyr::replace_na(list(log_transcripts_count_new = 0, transcripts_count_new = 0)) %>%
+  fill(genotype, .direction = "downup") %>%
+  ggplot(aes(x = labID, y = fct_rev(species_new), fill = log_transcripts_count))+
+  geom_tile(color="black") +
+  scale_fill_gradient(name = "log10\ntranscript count",
+                      limits = c(0, 8),
+                      na.value = "white", low="white", high = "red") + 
+  theme_bw() +
+  labs(title = "Deer mouse SPF SI RNAseq data-SI only\nAJ39", 
+       x = "Mouse ID", 
+       y = "Virus family",
+       caption = "AJ39c_13 & 14 = WT deer mice\nAJ39c_15 & 16 = STAT2 KO deer mice") +
+  theme(plot.title = element_text(size = 15),
+        panel.grid.major = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text = element_text(size = 12))
+```
+
+Correct read count using SPF data
+
+```{r}
+avg_spf_reads <- normalized_counts_viruses_si_feces_filtered %>%
+  filter(condition == "spf") %>%
+  droplevels() %>%
+  group_by(labID) %>%
+  tidyr::replace_na(list(log_transcripts_count_new = 0, transcripts_count_new = 0)) %>%
+  fill(genotype, .direction = "downup") %>%
+  group_by(species_new) %>%
+  summarise(average_spf_read_count = mean(log_transcripts_count))
+
+normalized_counts_viruses_si_feces_filtered <- merge(normalized_counts_viruses_si_feces_filtered, avg_spf_reads, by = "species_new") %>%
+  mutate(log_transcripts_count_corrected = log_transcripts_count - average_spf_read_count) %>%
+  mutate(log_transcripts_count_corrected = ifelse(log_transcripts_count_corrected < 0, 0, log_transcripts_count_corrected))
+```
+
+
+Summary plot- species level
+```{r}
+#Heatmap of cage 1 data
+aj39_spp_summary_plot_cage1 <- normalized_counts_viruses_si_feces_filtered %>%
+  filter(cage == "1" & condition == "ch") %>%
+  group_by(species_new) %>%
+  filter(any(normalized_counts > 0)) %>%
+  droplevels() %>%
+  ggplot(aes(x = genotype, y = fct_rev(species_new), fill = log_transcripts_count_corrected))+
+  geom_tile(color="black") +
+  facet_grid(.~tissue_harvest, scales = "free_x") +
+  scale_fill_gradient(name = "log10\ntranscript count",
+                      limits = c(0,9),
+                      breaks = c(0,3,6,9),
+                      na.value = "white", low="white", high = "red") + 
+  theme_bw() +
+  labs(title = "Deer mouse cohousing results\nAJ39 timecourse, cage #1", x = "Mouse genotype", y = "Virus species") +
+  theme(plot.title = element_text(size = 15),
+        panel.grid.major = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text = element_text(size = 12))
+aj39_spp_summary_plot_cage1
+```
+
+```{r}
+#Heatmap of cage 2 data
+aj39_spp_summary_plot_cage2 <- normalized_counts_viruses_si_feces_filtered %>%
+  filter(cage == "2" & condition == "ch") %>%
+  group_by(species_new) %>%
+  filter(any(normalized_counts > 0)) %>%
+  droplevels() %>%
+  ggplot(aes(x = genotype, y = fct_rev(species_new), fill = log_transcripts_count_corrected)) +
+  geom_tile(color="black") +
+  facet_grid(.~tissue_harvest, scales = "free_x") +
+  scale_fill_gradient(name = "log10\ntranscript count",
+                      limits = c(0,9),
+                      breaks = c(0,3,6,9),
+                      na.value = "white", low="white", high = "red") + 
+  theme_bw() +
+  labs(title = "Deer mouse cohousing results\nAJ39 timecourse, cage #2", x = "Mouse genotype", y = "Virus species") +
+  theme(plot.title = element_text(size = 15),
+        panel.grid.major = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text = element_text(size = 12))
+aj39_spp_summary_plot_cage2
+```

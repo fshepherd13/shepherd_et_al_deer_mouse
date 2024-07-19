@@ -1,0 +1,144 @@
+file	product	site	LOG
+NA	NA	NA	SNPGenie initiated at local time Wed May  8 12:56:32 2024
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	1360	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2052	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2061	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2121	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2175	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2310	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2892	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2901	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2943	Variant 'A' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2949	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2967	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	2973	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	3024	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	3138	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	3144	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	3168	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	3171	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	3450	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	3477	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	3552	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	3555	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	4836	Variant 'G' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	4950	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5136	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5145	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5562	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5580	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5688	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5691	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5785	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5862	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5865	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5913	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5934	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	5937	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	6054	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	6156	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	6195	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	6219	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	6381	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	6861	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	6882	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	6978	Variant 'A' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	7374	Variant 'A' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	7401	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	7407	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	7590	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	NA	N/A	A total of 47 variants have been excluded because they fall below the minimum minor allele frequency
+N/A	2A_region	3883	Does not begin with a START (ATG) codon, but rather ACA. If this was unexpected, please check your annotations
+N/A	2B_region	4216	Does not begin with a START (ATG) codon, but rather GGT. If this was unexpected, please check your annotations
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	2C_region	4836	Variant 'G' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	2C_region	4950	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	2C_region	5136	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	2C_region	5145	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	2C_region	5562	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	2C_region	5580	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	2C_region	5688	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	2C_region	5691	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	2C_region	N/A	A total of 8 variants have been excluded because they fall below the minimum minor allele frequency
+N/A	2C_region	4711	Does not begin with a START (ATG) codon, but rather GGT. If this was unexpected, please check your annotations
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3A_region	5785	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3A_region	5862	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3A_region	5865	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3A_region	5913	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3A_region	5934	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3A_region	5937	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3A_region	N/A	A total of 6 variants have been excluded because they fall below the minimum minor allele frequency
+N/A	3A_region	5716	Does not begin with a START (ATG) codon, but rather GGC. If this was unexpected, please check your annotations
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3B_region	6054	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3B_region	N/A	A total of 1 variants have been excluded because they fall below the minimum minor allele frequency
+N/A	3B_region	6001	Does not begin with a START (ATG) codon, but rather GCG. If this was unexpected, please check your annotations
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3C_region	6156	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3C_region	6195	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3C_region	6219	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3C_region	6381	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3C_region	N/A	A total of 4 variants have been excluded because they fall below the minimum minor allele frequency
+N/A	3C_region	6082	Does not begin with a START (ATG) codon, but rather AGC. If this was unexpected, please check your annotations
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3D_region	6861	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3D_region	6882	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3D_region	6978	Variant 'A' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3D_region	7374	Variant 'A' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3D_region	7401	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3D_region	7407	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3D_region	7590	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	3D_region	N/A	A total of 7 variants have been excluded because they fall below the minimum minor allele frequency
+N/A	3D_region	6652	Does not begin with a START (ATG) codon, but rather TCC. If this was unexpected, please check your annotations
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP0_region	1360	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP0_region	2052	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP0_region	2061	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP0_region	2121	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP0_region	2175	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP0_region	2310	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP0_region	N/A	A total of 6 variants have been excluded because they fall below the minimum minor allele frequency
+N/A	VP0_region	1270	Does not begin with a START (ATG) codon, but rather GGC. If this was unexpected, please check your annotations
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP1_region	3138	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP1_region	3144	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP1_region	3168	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP1_region	3171	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP1_region	3450	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP1_region	3477	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP1_region	3552	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP1_region	3555	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP1_region	N/A	A total of 8 variants have been excluded because they fall below the minimum minor allele frequency
+N/A	VP1_region	3043	Does not begin with a START (ATG) codon, but rather GGC. If this was unexpected, please check your annotations
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP3_region	2892	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP3_region	2901	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP3_region	2943	Variant 'A' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP3_region	2949	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP3_region	2967	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP3_region	2973	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP3_region	3024	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_A.vcf	VP3_region	N/A	A total of 7 variants have been excluded because they fall below the minimum minor allele frequency
+N/A	VP3_region	2374	Does not begin with a START (ATG) codon, but rather CAC. If this was unexpected, please check your annotations
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	195	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	1360	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	2310	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	4950	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	5028	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	6156	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	6195	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	6219	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	6381	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	6861	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	6882	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	6978	Variant 'A' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	NA	N/A	A total of 12 variants have been excluded because they fall below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	2C_region	4950	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	2C_region	5028	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	2C_region	N/A	A total of 2 variants have been excluded because they fall below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	3C_region	6156	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	3C_region	6195	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	3C_region	6219	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	3C_region	6381	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	3C_region	N/A	A total of 4 variants have been excluded because they fall below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	3D_region	6861	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	3D_region	6882	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	3D_region	6978	Variant 'A' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	3D_region	N/A	A total of 3 variants have been excluded because they fall below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	VP0_region	1360	Variant 'C' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	VP0_region	2310	Variant 'T' excluded from analysis because it falls below the minimum minor allele frequency
+temp_vcf4_AJ34_2_2_SI_MKV1_WG_B.vcf	VP0_region	N/A	A total of 2 variants have been excluded because they fall below the minimum minor allele frequency
+NA	NA	NA	SNPGenie completed at local time Wed May  8 12:57:19 2024. The process took 47.00 secs, i.e., 0 mins and 47.00 secs

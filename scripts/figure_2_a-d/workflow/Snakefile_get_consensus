@@ -1,0 +1,19 @@
+import pandas as pd
+
+configfile: "../config/config.yaml"
+IDS = set(pd.read_csv(config["sample_file"])['sample'].str.rsplit("_",n=1).str[0]) #AJ30_1_2_MHV_RDRP
+SAMPLES = pd.read_csv(config["sample_file"])['sample'] #AJ30_1_2_MHV_RDRP_A1
+df=pd.read_csv(config["sample_file"])
+PET_STORE=set(df.loc[df['genotype'].str.contains('pet')]['sample'].str.rsplit("_",n=1).str[0])
+IN_DIR = config["in_dir"]
+
+include: "rules/common.smk"
+include: "rules/index_ref.smk"
+include: "rules/trim.smk"
+include: "rules/generate_consensus.smk"
+
+rule all:
+    input:
+        expand("../results/consensus_calling/final/{pet_store}.fa", pet_store=PET_STORE),
+        expand("../results/trimmed_reads/{id}_{rep}{pool}_R1_trimmed.fastq", id=IDS, rep=["A", "B"], pool=["1","2"]),
+        expand("../results/trimmed_reads/{id}_{rep}{pool}_R2_trimmed.fastq", id=IDS, rep=["A", "B"], pool=["1","2"])

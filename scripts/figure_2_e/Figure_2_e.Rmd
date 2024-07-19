@@ -1,0 +1,67 @@
+---
+title: "Figure 2E"
+author: "Frances Shepherd"
+date: "6/10/2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(reshape2)
+
+meta <- read.csv("graph_metadata.csv", header = TRUE)
+
+aj34_files <- grep("AJ34",
+                   product_results_files,
+                   value = TRUE,
+                   fixed = TRUE)
+
+aj34_product_results <- read_delim(aj34_files, id = "name", delim = "\t") %>%
+  mutate(file = str_remove(file, "temp_vcf4_"),
+         file = str_remove(file, ".vcf"),
+         name = str_remove(name, "snpgenie/"),
+         name = str_remove(name, "/product_results.txt"),
+         replicate = gsub("^.*_", "", file))
+
+aj34_dnds_df <- aj34_product_results %>%
+  group_by(name, product) %>%
+  summarise(avg_piN = mean(piN),
+            avg_piS = mean(piS)) %>%
+  mutate(piN_piS = avg_piN/avg_piS,
+         product = str_remove(product, "_region"),
+         product = factor(product, levels = c("L", "VP3", "VP0", "VP1", "2A", "2B", "2C", "3A", "3B", "3C", "3D"))) %>%
+  merge(., meta, by = "name") %>%
+  mutate(genotype = factor(genotype, levels = c("petstore", "wt_peromyscus", "stat2_peromyscus", "ifnlar_mus")),
+         genotype_tissue = paste0(genotype, "_", tissue))
+
+aj34_dnds_df %>%
+  group_by(name, product) %>%
+  pivot_longer(cols = c("avg_piN", "avg_piS"), names_to = "selection", values_to = "pi") %>%
+  filter(genotype_tissue != "petstore_si" & genotype != "ifnlar_mus") %>%
+  ungroup() %>%
+  ggplot(aes(x = product, y = pi, fill = selection)) +
+  #geom_point() +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  scale_fill_manual(values = c("#064AB7", "#76D1FF")) +
+  facet_grid(genotype~.) +
+  scale_y_continuous(expand = c(0,0)) +
+  ggtitle("MKV1 piN vs piS\nAJ34") +
+  labs(x = "Peptide",
+       y = "piN or piS") +
+    theme_bw() +
+    theme(panel.grid = element_blank(),
+          #panel.border = element_blank(), 
+          axis.ticks.length = unit(0.25, "cm"),
+          text=element_text(color="black", size = 12),
+          axis.text=element_text(color="black"),
+          axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggsave(filename = "plots/AJ34 MKV1 dnds plot.pdf", height = 8, width = 6)
+
+```
+

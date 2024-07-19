@@ -1,0 +1,14 @@
+import pandas as pd
+
+SAMPLES = pd.read_csv(config["sample_file"])['Sample']
+IN_DIR = config["in_dir"]
+EXP = config["experiment"]
+NUM=["%.3d" % i for i in range(0,100)]
+
+include: "rules/common.smk"
+include: "rules/trim.smk"
+include: "rules/star.smk"
+
+rule all:
+    input:
+        expand("../results/star/{sample}/{sample}_Unmapped.out.mate{num}", sample=SAMPLES, num=[1,2])

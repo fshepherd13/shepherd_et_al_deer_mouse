@@ -1,0 +1,18 @@
+import pandas as pd
+
+configfile: "../config/config.yaml"
+IDS = set(pd.read_csv(config["sample_file"])['sample'].str.rsplit("_",n=1).str[0]) #AJ30_1_2_MHV_RDRP
+SAMPLES = pd.read_csv(config["sample_file"])['sample'] #AJ30_1_2_MHV_RDRP_A1
+REPS=["A","B"]
+df=pd.read_csv(config["sample_file"])
+
+include: "rules/call_snvs.smk"
+include: "rules/filter_snvs.smk"
+include: "rules/snpgenie.smk"
+
+rule all:
+    input:
+        expand("../results/snpgenie/{id}_filtered_merged_ed.vcf", id = IDS),
+        expand("../results/filtered_snvs/{id}/{id}_filtered_merged.vcf", id = IDS),
+        expand("../results/filtered_snvs/{id}/{num}.vcf.gz", num = ["0000","0001","0002","0003"], id = IDS),
+        expand("../results/snvs/{id}_A.vcf.gz.csi", id = IDS)
